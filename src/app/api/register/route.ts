@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { NextResponse, NextRequest } from "next/server";
-import { hashPassword } from "@/lib/encrypt";
+import { hashPassword } from "@/lib/Hasher";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
