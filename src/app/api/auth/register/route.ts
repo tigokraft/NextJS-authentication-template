@@ -2,13 +2,12 @@ import * as z from "zod";
 import { NextResponse, NextRequest } from "next/server";
 import { hashPassword } from "@/lib/Hasher";
 import { PrismaClient } from "@prisma/client";
-import { serialize } from "cookie";
 import { signToken } from "@/lib/Jwt";
 
 const prisma = new PrismaClient();
 
 const userObj = z.object({
-  name: z.string().min(2),
+  name: z.string().min(5),
   email: z.string().email(),
   password: z.string().min(8),
 });
