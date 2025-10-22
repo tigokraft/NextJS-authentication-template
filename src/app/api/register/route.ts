@@ -2,6 +2,8 @@ import * as z from "zod";
 import { NextResponse, NextRequest } from "next/server";
 import { hashPassword } from "@/lib/Hasher";
 import { PrismaClient } from "@prisma/client";
+import { serialize } from "cookie";
+import { signToken } from "@/lib/Jwt";
 
 const prisma = new PrismaClient();
 
@@ -41,8 +43,11 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
       },
     });
+
+    const token = signToken({ userId: user.id, email: user.email });
+
     return NextResponse.json(
-      { message: "User registered successfully", userId: user.id },
+      { message: "User registered successfully", token: token },
       { status: 201 }
     );
   } catch (error) {

@@ -20,30 +20,17 @@ model User {
   password       String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  Session        Session[]
   ForgotPassword ForgotPassword[]
 
   @@map("users")
 }
 
-model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Valid     Boolean  @default(true)
-  IP        String
-
-  @@map("sessions")
-}
-
 model ForgotPassword {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-  used  Boolean @default(false)
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  used       Boolean  @default(false)
+  createdAt  DateTime @default(now())
   validUntil DateTime
 
   @@map("forgot_password")
