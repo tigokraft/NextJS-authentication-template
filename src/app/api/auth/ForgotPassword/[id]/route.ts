@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { useRouter } from "next/router";
 import { PrismaClient } from "@prisma/client";
 import * as z from "zod";
+import { hashPassword } from "@/lib/Hasher";
 
 const prisma = new PrismaClient();
 
@@ -12,8 +12,9 @@ const resetPasswordObj = z.object({
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   // params.id is the params from the route [id]
   const parsedBody = resetPasswordObj.safeParse(await req.json());
 
@@ -34,7 +35,7 @@ export async function POST(
   try {
     const resetRequest = await prisma.forgotPassword.findUnique({
       where: {
-        id: params.id,
+        id,
       },
     });
     if (!resetRequest) {
@@ -57,6 +58,23 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    const updateRequest = await prisma.forgotPassword.update({
+      where: { id },
+      data: { used: true },
+    });
+
+    const updateUserPassword = await prisma.user.update({
+      where: { id: resetRequest.userId },
+      data: { password: await hashPassword(parsedBody.data.password) },
+    });
+
+    const hashedPassword = await hashPassword(parsedBody.data.password);
+
+    return NextResponse.json(
+      { message: "Password has been reset successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error", details: error },
