@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -53,7 +55,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     }
 
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth/Register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +91,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
